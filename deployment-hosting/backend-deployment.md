@@ -1,101 +1,135 @@
 # Backend Deployment (DigitalOcean)
 
-This guide walks through the deployment of Matra's backend on DigitalOcean.
+This internal documentation describes our backend infrastructure and deployment process on DigitalOcean.
 
-## Prerequisites
-- DigitalOcean account
-- Domain name (for API endpoints)
-- Docker installed locally
-- Node.js v16+ and npm
+## Infrastructure Overview
+- **Server Type**: DigitalOcean VPS Droplets
+- **Operating System**: Ubuntu 20.04 LTS
+- **Container Platform**: Docker & Docker Compose
+- **Database**: MongoDB Atlas
+- **Load Balancer**: DigitalOcean Load Balancer
 
-## Deployment Steps
+## Server Specifications
+- Production: 4 CPU, 8GB RAM droplets ($40/month)
+- Staging: 2 CPU, 4GB RAM droplet ($20/month)
+- Development: 1 CPU, 2GB RAM droplet ($10/month)
 
-### 1. Create a Droplet
-1. Log in to your DigitalOcean account
-2. Navigate to "Droplets" and click "Create Droplet"
-3. Select Ubuntu 20.04 LTS
-4. Choose a plan (recommended: Basic, $20/mo with 4GB RAM)
-5. Select a datacenter region closest to your target users
-6. Add your SSH keys
-7. Create the droplet
+## Server Setup Process
 
-### 2. Configure the Server
+The following represents our standard server setup process:
+
 ```bash
-# Update packages
+# Initial server updates
 sudo apt-get update
 sudo apt-get upgrade -y
 
-# Install Docker
+# Docker installation
 sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release -y
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 
-# Install Docker Compose
+# Docker Compose installation
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-# Set up firewall
+# Security configuration
 sudo ufw allow OpenSSH
 sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 sudo ufw enable
 ```
 
-### 3. Configure DNS
-1. Add an A record in your domain's DNS settings pointing to your droplet's IP address
-2. Set up reverse proxy (Nginx) to route traffic
+## Deployment Architecture
 
-### 4. Deploy the Backend
-```bash
-# Clone the repository
-git clone https://github.com/your-org/matra-backend.git
-cd matra-backend
+Our backend services are deployed as Docker containers:
 
-# Configure environment variables
-cp .env.example .env
-nano .env  # Edit with your configuration
-
-# Build and start the containers
-docker-compose build
-docker-compose up -d
+```
+api.matra.io --> Load Balancer --> API Containers (3 instances)
+                                   |
+                                   v
+                                MongoDB Atlas (Cloud Database)
+                                   |
+                                   v
+                                Redis Cache
 ```
 
-### 5. Set Up SSL with Let's Encrypt
+## Deployment Process
+
+Our deployment workflow uses GitHub Actions:
+
+```yaml
+name: Deploy to Production
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        
+      - name: Login to Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: registry.digitalocean.com
+          username: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./backend
+          push: true
+          tags: registry.digitalocean.com/matra/api:latest
+          
+      - name: Deploy to DigitalOcean
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          key: ${{ secrets.DO_KEY }}
+          script: |
+            cd /opt/matra
+            docker-compose pull
+            docker-compose up -d
+```
+
+## Database Management
+
+MongoDB Atlas is used for database hosting with the following configuration:
+- Production: M20 dedicated cluster with 3 nodes
+- Staging: M10 dedicated cluster
+- Development: M0 shared cluster
+
+## SSL Configuration
+
+SSL certificates are managed through Let's Encrypt:
+
 ```bash
 # Install Certbot
 sudo apt-get install certbot python3-certbot-nginx -y
 
 # Obtain SSL certificate
-sudo certbot --nginx -d api.yourdomain.com
+sudo certbot --nginx -d api.matra.io
 ```
 
-### 6. Configure MongoDB
-```bash
-# Secure MongoDB installation
-docker exec -it matra-mongodb mongo
+## Backup Strategy
+- Database: Automated daily snapshots retained for 30 days
+- Server: Weekly VM snapshots retained for 14 days
+- Code: GitHub repository with protected branches
 
-# In MongoDB shell
-use admin
-db.createUser({
-  user: "adminUser",
-  pwd: "securePassword",
-  roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]
-})
-exit
-
-# Edit docker-compose.yml to enable MongoDB authentication
-nano docker-compose.yml
-```
-
-### 7. Set Up Continuous Deployment
-1. Configure GitHub Actions or similar CI/CD pipeline
-2. Set up automated testing
-3. Configure deployment scripts
-
-## Scaling Considerations
-- Set up multiple API nodes behind a load balancer
-- Configure database replication for MongoDB
-- Implement caching using Redis
-- Set up monitoring with Prometheus and Grafana 
+## Monitoring Setup
+- Server metrics: DigitalOcean Monitoring
+- Application performance: New Relic
+- Error tracking: Sentry
+- Logs: Papertrail 

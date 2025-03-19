@@ -14,6 +14,7 @@
 * [P2P Transactions](user-guide/p2p-transactions.md)
 * [Swapping Tokens](user-guide/swapping-tokens.md)
 * [Security & 2FA](user-guide/security-2fa.md)
+* [Web Dashboard](user-guide/web-dashboard.md)
 
 ## Developer Guide
 

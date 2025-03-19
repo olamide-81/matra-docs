@@ -57,7 +57,11 @@ Matra is a decentralized P2P and self-custodial wallet available on iOS (TestFli
 ## Platform Status
 
 <div class="callout note">
-  <p><strong>Current Status:</strong> Matra is available in TestFlight (iOS) and Play Store (Android).</p>
+  <p><strong>Current Status:</strong> Matra is available in TestFlight (iOS), Play Store (Android), and Web Dashboard at <a href="https://web.matra.io/" target="_blank">web.matra.io</a></p>
+</div>
+
+<div class="callout tip">
+  <p><strong>Web Dashboard:</strong> Access your Matra wallet on the web by visiting <a href="https://web.matra.io/" target="_blank">web.matra.io</a> and scanning the QR code with your Matra mobile app to login and sync.</p>
 </div>
 
 <div class="callout warning">

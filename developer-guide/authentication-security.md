@@ -1,36 +1,46 @@
 # Authentication & Security
-This guide details how authentication and security are implemented in the Matra platform.
+This internal documentation details the authentication and security implementation in the Matra platform.
 
 ## Authentication Flow
 1. **User Registration**
-   - Email verification
-   - Password requirements (min 8 chars, includes special chars)
-   - Optional 2FA setup
+   - Email verification system
+   - No passwords required - we use email-based verification only
+   - Email addresses are only collected for notifications and P2P transaction verification
 
-2. **JWT-based Authentication**
-   - Tokens expire after 24 hours
-   - Refresh token mechanism for seamless experience
-   - Blacklisting of compromised tokens
+2. **Email-based Authentication**
+   - Verification codes sent to email
+   - Codes expire after 6 minutes
+   - One-time use codes for added security
 
 3. **2FA Implementation**
-   - Email-based verification codes
-   - Future: Google Authenticator integration
-   - Required for sensitive operations (large transfers, vendor functions)
+   - Email-based verification codes for P2P transactions only
+   - Future: Optional Google Authenticator integration (in roadmap for Q3)
+   - Used only for high-value or sensitive operations
 
-## API Security
-- All API endpoints are protected with HTTPS
-- Rate limiting prevents brute force attacks
-- IP-based restrictions for suspicious activity
-- Input validation on all endpoints
+## API Security Implementation
+- All API endpoints protected with HTTPS
+- Rate limiting: 100 requests per minute per IP
+- IP-based restrictions for suspicious activity detection
+- Input validation and sanitization on all endpoints
 
-## Wallet Security
+## Wallet Security Architecture
 - Self-custodial model - private keys never leave the device
 - AES-256 encryption for local storage
-- Biometric authentication support (where available)
-- Automatic session timeouts
+- Biometric authentication support on supported devices
+- Automatic session timeout after 30 minutes of inactivity
 
-## Developer Best Practices
+## Email Usage Policy
+Our internal policy regarding email usage:
+
+- Emails are collected only for notifications and 2FA for P2P transactions
+- No marketing emails without explicit opt-in from users
+- Email addresses are stored using AES-256 encryption
+- Email verification ensures account ownership
+
+## Development Guidelines
+For internal developers:
+
 - Never store API keys in client-side code
-- Implement proper error handling
-- Use webhook verification
-- Keep SDK and libraries updated 
+- Implement proper error handling with sanitized error messages
+- Use webhook verification with HMAC signatures
+- Keep all SDK and libraries updated to latest secure versions 

@@ -1,83 +1,82 @@
 # Getting Started with Matra
 
-<div class="callout tip">
-  <p><strong>Quick Start:</strong> Download Matra from <a href="https://testflight.apple.com/join/matra" target="_blank">iOS TestFlight</a> or <a href="https://play.google.com/store/apps/details?id=io.matra.wallet" target="_blank">Android Play Store</a> to begin your journey.</p>
-</div>
+This internal documentation describes the user onboarding process for the Matra wallet application.
 
-This guide will walk you through the essential steps to get started with Matra, from downloading the app to making your first transaction.
+## App Distribution
 
-## Download and Installation
+- **iOS TestFlight**: https://testflight.apple.com/join/matra
+- **Android Play Store**: https://play.google.com/store/apps/details?id=io.matra.wallet
+
+## Installation Process
 
 <div class="card-container">
   <div class="card">
-    <h3 class="card-title">📱 iOS Installation</h3>
+    <h3 class="card-title">iOS Installation</h3>
     <ol>
-      <li>Open TestFlight on your iOS device</li>
-      <li>Enter the invitation code or tap the invitation link</li>
-      <li>Tap "Accept" to join the Matra beta</li>
-      <li>Tap "Install" to download the app</li>
+      <li>User opens TestFlight on their iOS device</li>
+      <li>User enters our invitation code or taps the invitation link</li>
+      <li>User taps "Accept" to join the beta</li>
+      <li>User taps "Install" to download the app</li>
     </ol>
   </div>
   <div class="card">
-    <h3 class="card-title">📱 Android Installation</h3>
+    <h3 class="card-title">Android Installation</h3>
     <ol>
-      <li>Open the Google Play Store</li>
-      <li>Search for "Matra Wallet"</li>
-      <li>Tap "Install" to download the app</li>
-      <li>Wait for installation to complete</li>
+      <li>User opens the Google Play Store</li>
+      <li>User searches for "Matra Wallet"</li>
+      <li>User taps "Install" to download the app</li>
+      <li>Installation completes automatically</li>
     </ol>
   </div>
 </div>
 
-## Creating Your Account
+## User Onboarding Flow
 
 <div class="steps">
   <div class="step">
-    <h3>Open the Matra App</h3>
-    <p>Locate the Matra app on your device and tap to open it.</p>
+    <h3>App Launch</h3>
+    <p>User launches the Matra app for the first time.</p>
   </div>
   <div class="step">
-    <h3>Register a New Account</h3>
-    <p>Tap "Create Account" and enter your email address.</p>
+    <h3>Email Collection</h3>
+    <p>User is prompted to enter their email address.</p>
     <div class="callout note">
-      <p>A verification code will be sent to your email. This code expires after 6 minutes.</p>
+      <p>We only collect email for sending notifications and for 2FA verification during P2P transactions.</p>
     </div>
   </div>
   <div class="step">
-    <h3>Verify Your Email</h3>
-    <p>Enter the verification code from your email to verify your account.</p>
+    <h3>Email Verification</h3>
+    <p>A verification code is sent to the user's email. The code expires after 6 minutes.</p>
+    <p>User enters this verification code to validate their email ownership.</p>
   </div>
   <div class="step">
-    <h3>Set Up Your Profile</h3>
-    <p>Enter your name and create a strong password for your account.</p>
-    <div class="callout warning">
-      <p>Choose a strong password that includes uppercase letters, lowercase letters, numbers, and special characters.</p>
-    </div>
+    <h3>Profile Setup</h3>
+    <p>User enters their name to complete their profile.</p>
   </div>
   <div class="step">
-    <h3>Create Your Wallet</h3>
-    <p>Follow the prompts to create your self-custodial wallet.</p>
-    <p>For detailed wallet creation instructions, see <a href="creating-wallet.md">Creating a Wallet</a>.</p>
+    <h3>Wallet Creation</h3>
+    <p>User follows the prompts to create their self-custodial wallet.</p>
+    <p>For detailed wallet creation implementation, see <a href="creating-wallet.md">Creating a Wallet</a>.</p>
   </div>
 </div>
 
-## Securing Your Recovery Phrase
+## Recovery Phrase Security
 
 <div class="callout danger">
-  <p><strong>CRITICAL:</strong> Your recovery phrase is the only way to recover your wallet if you lose access to your device or forget your password. Matra cannot recover your wallet for you if you lose your recovery phrase.</p>
+  <p><strong>CRITICAL:</strong> Users must understand that their recovery phrase is the only way to recover their wallet if they lose access to their device. Matra cannot recover wallets for users who lose their recovery phrase.</p>
 </div>
 
-When you create your wallet, you'll be shown a 12-word recovery phrase. Follow these steps to secure it:
+During wallet creation, users are shown a 12-word recovery phrase. The app instructs them to:
 
-1. Write down your recovery phrase on paper in the correct order
+1. Write down the recovery phrase on paper in the correct order
 2. Store this paper in a secure, waterproof, and fireproof location
 3. Consider creating multiple backup copies stored in different secure locations
-4. Never store your recovery phrase digitally (no photos, no digital documents, no cloud storage)
-5. Never share your recovery phrase with anyone, including Matra support
+4. Never store the recovery phrase digitally (no photos, no digital documents, no cloud storage)
+5. Never share the recovery phrase with anyone, including Matra support
 
-## Navigating the App
+## App Navigation Structure
 
-After creating your wallet, you'll have access to the main features of Matra:
+After creating a wallet, users have access to these main interface areas:
 
 <table>
   <thead>
@@ -89,52 +88,80 @@ After creating your wallet, you'll have access to the main features of Matra:
   <tbody>
     <tr>
       <td>Home</td>
-      <td>View wallet balance, recent transactions, and quick actions</td>
+      <td>Wallet balance, recent transactions, and quick actions</td>
     </tr>
     <tr>
       <td>Wallet</td>
-      <td>View all tokens, send and receive transactions</td>
+      <td>All tokens, send and receive transaction functions</td>
     </tr>
     <tr>
       <td>P2P</td>
-      <td>Access P2P marketplace to buy and sell tokens</td>
+      <td>P2P marketplace to buy and sell tokens</td>
     </tr>
     <tr>
       <td>Swap</td>
-      <td>Exchange one token for another through ChangeNOW</td>
+      <td>Token exchange through ChangeNOW integration</td>
     </tr>
     <tr>
       <td>Profile</td>
-      <td>Manage account settings, security options, and support</td>
+      <td>Account settings and support access</td>
     </tr>
   </tbody>
 </table>
 
-## Making Your First Transaction
+## Web Dashboard Authentication
 
-Ready to start using your wallet? Here are the basics:
+Users can access our web interface through:
+
+<div class="steps">
+  <div class="step">
+    <h3>Web Access</h3>
+    <p>User visits web.matra.io in their browser.</p>
+  </div>
+  <div class="step">
+    <h3>QR Code Authentication</h3>
+    <p>User opens their Matra mobile app and scans the QR code displayed on the web dashboard.</p>
+  </div>
+  <div class="step">
+    <h3>Authentication Confirmation</h3>
+    <p>User confirms the connection request on their mobile device.</p>
+    <div class="callout note">
+      <p>This ensures only authorized users can access their wallet through the web interface.</p>
+    </div>
+  </div>
+  <div class="step">
+    <h3>Web Interface Access</h3>
+    <p>After successful authorization, users can manage their wallet through the web interface.</p>
+  </div>
+</div>
+
+<div class="callout tip">
+  <p>The web dashboard maintains the same security level since private keys never leave the mobile device. The web interface uses secure communication with the mobile app to authorize transactions.</p>
+</div>
+
+## Transaction Processes
+
+Users can perform these basic operations:
 
 ### Receiving Tokens
 
-1. Go to the "Wallet" tab
-2. Select the token you want to receive
-3. Tap "Receive"
-4. Share your wallet address or QR code with the sender
+1. User navigates to the "Wallet" tab
+2. User selects the token they want to receive
+3. User taps "Receive"
+4. User shares their wallet address or QR code with the sender
 
 ### Sending Tokens
 
-1. Go to the "Wallet" tab
-2. Select the token you want to send
-3. Tap "Send"
-4. Enter the recipient's address (or scan their QR code)
-5. Enter the amount to send
-6. Review and confirm the transaction
+1. User navigates to the "Wallet" tab
+2. User selects the token they want to send
+3. User taps "Send"
+4. User enters the recipient's address (or scans their QR code)
+5. User enters the amount to send
+6. User reviews and confirms the transaction
 
-## Next Steps
-
-Now that you've set up your Matra wallet, explore these guides to learn more:
+## Related Documentation
 
 - [Creating a Wallet](creating-wallet.md) - Detailed wallet creation process
-- [P2P Transactions](p2p-transactions.md) - How to trade with vendors
-- [Swapping Tokens](swapping-tokens.md) - Exchange one token for another
-- [Security & 2FA](security-2fa.md) - Protect your assets with advanced security 
+- [P2P Transactions](p2p-transactions.md) - P2P marketplace functionality
+- [Swapping Tokens](swapping-tokens.md) - Token exchange implementation
+- [Security & 2FA](security-2fa.md) - Security features and 2FA implementation 

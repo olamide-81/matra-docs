@@ -12,6 +12,9 @@ This documentation covers the endpoints available in the Tradematra V1 Postman c
   <div class="api-endpoint-body">
     <h3>Send Verification Email</h3>
     <p>Sends a verification code to the user's email that expires after 6 minutes. You can request another token after 1 minute of requesting the previous code.</p>
+    <div class="callout note">
+      <p>Matra only collects email for sending notifications and for 2FA verification during P2P transactions.</p>
+    </div>
     
     <h4>Request Body</h4>
     
@@ -52,7 +55,6 @@ This documentation covers the endpoints available in the Tradematra V1 Postman c
 ```json
 {
   "email": "user@example.com",
-  "password": "securePassword123!",
   "firstName": "John",
   "lastName": "Doe",
   "verificationCode": "123456"
@@ -78,14 +80,22 @@ This documentation covers the endpoints available in the Tradematra V1 Postman c
   </div>
   <div class="api-endpoint-body">
     <h3>User Login</h3>
-    <p>Authenticates a user and returns an access token.</p>
+    <p>Authenticates a user using email verification and returns an access token.</p>
     
-    <h4>Request Body</h4>
+    <h4>Step 1: Request Verification Code</h4>
+    
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+    <h4>Step 2: Submit Verification Code</h4>
     
 ```json
 {
   "email": "user@example.com",
-  "password": "securePassword123!"
+  "verificationCode": "123456"
 }
 ```
 
@@ -286,6 +296,9 @@ This documentation covers the endpoints available in the Tradematra V1 Postman c
   <div class="api-endpoint-body">
     <h3>Create P2P Order</h3>
     <p>Creates a new P2P order.</p>
+    <div class="callout note">
+      <p>P2P transactions require 2FA verification via email for security purposes.</p>
+    </div>
   </div>
 </div>
 

@@ -1,142 +1,62 @@
 # Web Dashboard Deployment
 
-This guide walks through the process of deploying Matra's Next.js web dashboard.
+This internal documentation describes our infrastructure and deployment process for the Matra web dashboard.
 
-## Prerequisites
-- DigitalOcean account or other cloud provider
-- Domain name for the dashboard
-- Node.js v16+ and npm
-- Next.js knowledge
+## Technology Stack
+- **Frontend Framework**: Next.js
+- **Hosting**: DigitalOcean Droplets
+- **Build Tool**: GitHub Actions
+- **Containerization**: Docker
+- **CDN**: CloudFlare
 
-## Development Setup
+## Environment Configuration
+- **Development**: Local Next.js development server
+- **Staging**: DigitalOcean droplet (2GB RAM)
+- **Production**: DigitalOcean droplet (4GB RAM)
+
+## Local Development Setup
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/matra-dashboard.git
-cd matra-dashboard
+# Setup development environment
+git clone git@github.com:matra/web-dashboard.git
+cd web-dashboard
 
 # Install dependencies
 npm install
-
-# Configure environment variables
-cp .env.example .env.local
-# Edit .env.local with your API URLs and other configuration
 
 # Run development server
 npm run dev
 ```
 
-## Build for Production
+## Build Process
 ```bash
 # Create optimized production build
 npm run build
 
-# Test the production build locally
-npm run start
+# Start production server
+npm start
 ```
 
-## Deployment Options
+## Production Deployment Architecture
 
-### Option 1: Vercel (Recommended)
+The web dashboard uses a Docker container deployed on a DigitalOcean droplet with Nginx:
 
-1. Push your code to a Git repository (GitHub, GitLab, BitBucket)
-2. Connect your repository to Vercel
-3. Configure environment variables in the Vercel dashboard
-4. Deploy the project
-
-Vercel will automatically build and deploy your Next.js application, and provide preview deployments for pull requests.
-
-### Option 2: DigitalOcean App Platform
-
-1. Log in to your DigitalOcean account
-2. Navigate to "Apps" and click "Create App"
-3. Connect your Git repository
-4. Select the repository and branch
-5. Configure your app:
-   - Type: Web Service
-   - Build Command: `npm run build`
-   - Run Command: `npm start`
-6. Configure environment variables
-7. Select a plan (Basic or Pro)
-8. Launch the app
-
-### Option 3: Traditional VPS Deployment
-
-#### Set Up the Server
-```bash
-# Update packages
-sudo apt-get update
-sudo apt-get upgrade -y
-
-# Install Node.js
-curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-sudo apt-get install -y nodejs
-
-# Install PM2 for process management
-sudo npm install -g pm2
-
-# Set up Nginx
-sudo apt-get install nginx -y
+```
+web.matra.io --> CloudFlare --> Nginx --> Next.js Container
 ```
 
-#### Deploy the Dashboard
-```bash
-# Create a directory for the app
-mkdir -p /var/www/matra-dashboard
-cd /var/www/matra-dashboard
+## Deployment Process
 
-# Clone the repository or upload your files
-git clone https://github.com/your-org/matra-dashboard.git .
+Our team uses GitHub Actions for automated deployments:
 
-# Install dependencies and build
-npm install --production
-npm run build
-
-# Start the app with PM2
-pm2 start npm --name "matra-dashboard" -- start
-pm2 save
-pm2 startup
-
-# Configure Nginx as a reverse proxy
-sudo nano /etc/nginx/sites-available/matra-dashboard
-```
-
-Nginx configuration:
-```nginx
-server {
-    listen 80;
-    server_name dashboard.yourdomain.com;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-Enable the site and set up SSL:
-```bash
-sudo ln -s /etc/nginx/sites-available/matra-dashboard /etc/nginx/sites-enabled/
-sudo nginx -t
-sudo systemctl restart nginx
-
-# Set up SSL with Let's Encrypt
-sudo apt-get install certbot python3-certbot-nginx -y
-sudo certbot --nginx -d dashboard.yourdomain.com
-```
-
-## Continuous Deployment
-
-### GitHub Actions Workflow
 ```yaml
-name: Deploy to Production
+name: Deploy Web Dashboard
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [main]
+    paths:
+      - 'web-dashboard/**'
 
 jobs:
   deploy:
@@ -144,17 +64,144 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v20
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+          node-version: '16'
+          
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./web-dashboard
+        
+      - name: Build Next.js application
+        run: npm run build
+        working-directory: ./web-dashboard
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+          
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./web-dashboard
+          push: true
+          tags: registry.digitalocean.com/matra/web-dashboard:latest
+          
+      - name: Deploy to DigitalOcean
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.WEB_HOST }}
+          username: ${{ secrets.WEB_USERNAME }}
+          key: ${{ secrets.WEB_KEY }}
+          script: |
+            cd /opt/matra-web
+            docker-compose pull
+            docker-compose up -d
 ```
 
-## Performance Optimization
-- Enable caching in Next.js configuration
-- Implement Image Optimization with next/image
-- Configure Content Security Policy headers
-- Set up proper cache-control headers 
+## Server Configuration
+
+Our DigitalOcean droplet is configured with the following:
+
+```bash
+# Update system packages
+sudo apt update && sudo apt upgrade -y
+
+# Install Docker
+sudo apt install docker.io docker-compose -y
+
+# Create application directory
+sudo mkdir -p /opt/matra-web
+cd /opt/matra-web
+
+# Create docker-compose.yml
+cat > docker-compose.yml << 'EOF'
+version: '3'
+services:
+  web:
+    image: registry.digitalocean.com/matra/web-dashboard:latest
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - web
+EOF
+
+# Set up Nginx configuration
+mkdir -p nginx/conf.d
+cat > nginx/conf.d/default.conf << 'EOF'
+server {
+    listen 80;
+    server_name web.matra.io;
+    
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+    
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name web.matra.io;
+    
+    ssl_certificate /etc/letsencrypt/live/web.matra.io/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/web.matra.io/privkey.pem;
+    
+    location / {
+        proxy_pass http://web:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+EOF
+```
+
+## SSL Certificate Automation
+
+We use Certbot for SSL certificate management:
+
+```bash
+# Install Certbot
+sudo apt-get install certbot python3-certbot-nginx -y
+
+# Set up initial certificate
+sudo certbot --nginx -d web.matra.io
+
+# Create renewal script
+cat > /etc/cron.weekly/renew-certs << 'EOF'
+#!/bin/bash
+certbot renew --quiet
+docker-compose -f /opt/matra-web/docker-compose.yml restart nginx
+EOF
+
+# Make script executable
+chmod +x /etc/cron.weekly/renew-certs
+```
+
+## Monitoring and Logging
+
+We use the following tools for monitoring:
+- **Uptime monitoring**: UptimeRobot
+- **Error tracking**: Sentry
+- **Performance monitoring**: Vercel Analytics
+- **Logs**: Papertrail
+
+## Backup Strategy
+- Daily DigitalOcean backups
+- Full system snapshots retained for 7 days
+- Code repositories backup on GitHub and GitLab 

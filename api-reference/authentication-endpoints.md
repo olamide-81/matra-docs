@@ -1,19 +1,42 @@
 # Authentication Endpoints
 
+## Verify Email
+```
+POST /api/v1/auth/verify-email
+```
+
+Sends a verification code to the user's email address.
+
+### Request
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+### Response
+```json
+{
+  "success": true,
+  "message": "Verification code sent to email",
+  "expiresIn": 360
+}
+```
+
 ## Register User
 ```
 POST /api/v1/auth/register
 ```
 
-Register a new user with email and password.
+Register a new user with verified email.
 
 ### Request
 ```json
 {
   "email": "user@example.com",
-  "password": "securePassword123!",
   "firstName": "John",
-  "lastName": "Doe"
+  "lastName": "Doe",
+  "verificationCode": "123456"
 }
 ```
 
@@ -23,26 +46,42 @@ Register a new user with email and password.
   "success": true,
   "message": "User registered successfully",
   "userId": "user_123456",
-  "verificationEmailSent": true
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
 ```
 
-## Login
+## Login with Email Verification
 ```
 POST /api/v1/auth/login
 ```
 
-Authenticate a user and get access token.
+Authenticate a user using email verification.
 
-### Request
+### Request (Step 1)
 ```json
 {
-  "email": "user@example.com",
-  "password": "securePassword123!"
+  "email": "user@example.com"
 }
 ```
 
-### Response
+### Response (Step 1)
+```json
+{
+  "success": true,
+  "message": "Verification code sent to email",
+  "expiresIn": 360
+}
+```
+
+### Request (Step 2)
+```json
+{
+  "email": "user@example.com",
+  "verificationCode": "123456"
+}
+```
+
+### Response (Step 2)
 ```json
 {
   "success": true,
@@ -52,80 +91,17 @@ Authenticate a user and get access token.
 }
 ```
 
-## Verify Email
-```
-GET /api/v1/auth/verify-email/:token
-```
-
-Verify user email with token sent after registration.
-
-### Parameters
-- `token`: Verification token sent via email
-
-### Response
-```json
-{
-  "success": true,
-  "message": "Email verified successfully"
-}
-```
-
-## Request Password Reset
-```
-POST /api/v1/auth/forgot-password
-```
-
-Request password reset email.
-
-### Request
-```json
-{
-  "email": "user@example.com"
-}
-```
-
-### Response
-```json
-{
-  "success": true,
-  "message": "Password reset email sent"
-}
-```
-
-## Reset Password
-```
-POST /api/v1/auth/reset-password
-```
-
-Reset password with token.
-
-### Request
-```json
-{
-  "token": "reset_token_123",
-  "newPassword": "newSecurePassword456!"
-}
-```
-
-### Response
-```json
-{
-  "success": true,
-  "message": "Password reset successful"
-}
-```
-
-## Request 2FA Code
+## Request 2FA Code for P2P Transaction
 ```
 POST /api/v1/auth/request-2fa
 ```
 
-Request a 2FA code via email.
+Request a 2FA code via email for verifying a P2P transaction.
 
 ### Request
 ```json
 {
-  "email": "user@example.com"
+  "transactionId": "tx_123456"
 }
 ```
 
@@ -135,5 +111,97 @@ Request a 2FA code via email.
   "success": true,
   "message": "2FA code sent to email",
   "expiresIn": 300
+}
+```
+
+## Verify 2FA Code
+```
+POST /api/v1/auth/verify-2fa
+```
+
+Verify a 2FA code for a P2P transaction.
+
+### Request
+```json
+{
+  "transactionId": "tx_123456",
+  "verificationCode": "123456"
+}
+```
+
+### Response
+```json
+{
+  "success": true,
+  "message": "2FA verification successful",
+  "transaction": {
+    "id": "tx_123456",
+    "status": "VERIFIED"
+  }
+}
+```
+
+## Resend Verification Code
+```
+POST /api/v1/auth/resend-verification
+```
+
+Resend a verification code to the user's email.
+
+### Request
+```json
+{
+  "email": "user@example.com",
+  "purpose": "LOGIN" // Or "REGISTRATION" or "P2P_TRANSACTION"
+}
+```
+
+### Response
+```json
+{
+  "success": true,
+  "message": "Verification code resent",
+  "expiresIn": 360
+}
+```
+
+## Verify Email Change
+```
+POST /api/v1/auth/verify-email-change
+```
+
+Verify a change of email address.
+
+### Request (Step 1 - Request verification for new email)
+```json
+{
+  "currentEmail": "user@example.com",
+  "newEmail": "newemail@example.com"
+}
+```
+
+### Response (Step 1)
+```json
+{
+  "success": true,
+  "message": "Verification code sent to new email",
+  "expiresIn": 360
+}
+```
+
+### Request (Step 2 - Submit verification code)
+```json
+{
+  "currentEmail": "user@example.com",
+  "newEmail": "newemail@example.com",
+  "verificationCode": "123456"
+}
+```
+
+### Response (Step 2)
+```json
+{
+  "success": true,
+  "message": "Email updated successfully"
 }
 ``` 

@@ -57,7 +57,7 @@ Matra provides a seamless user experience across multiple platforms:
     <tr>
       <td>Web Dashboard</td>
       <td>Account management, transaction history, QR code linking</td>
-      <td>Coming soon</td>
+      <td>Available at <a href="https://web.matra.io/" target="_blank">web.matra.io</a></td>
     </tr>
   </tbody>
 </table>
