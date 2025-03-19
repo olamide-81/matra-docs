@@ -1,135 +1,46 @@
-# Backend Deployment (DigitalOcean)
+# Backend Deployment
 
-This internal documentation describes our backend infrastructure and deployment process on DigitalOcean.
+This internal documentation describes our backend infrastructure and deployment process.
 
 ## Infrastructure Overview
-- **Server Type**: DigitalOcean VPS Droplets
-- **Operating System**: Ubuntu 20.04 LTS
-- **Container Platform**: Docker & Docker Compose
-- **Database**: MongoDB Atlas
-- **Load Balancer**: DigitalOcean Load Balancer
+- Server hosting provider
+- Linux-based operating system
+- Containerization for application deployment
+- NoSQL database
+- Load balancing for high availability
 
 ## Server Specifications
-- Production: 4 CPU, 8GB RAM droplets ($40/month)
-- Staging: 2 CPU, 4GB RAM droplet ($20/month)
-- Development: 1 CPU, 2GB RAM droplet ($10/month)
+- Production: High-performance servers
+- Staging: Mid-tier performance servers
+- Development: Basic development environment
 
 ## Server Setup Process
 
-The following represents our standard server setup process:
-
-```bash
-# Initial server updates
-sudo apt-get update
-sudo apt-get upgrade -y
-
-# Docker installation
-sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release -y
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io -y
-
-# Docker Compose installation
-sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-
-# Security configuration
-sudo ufw allow OpenSSH
-sudo ufw allow 80/tcp
-sudo ufw allow 443/tcp
-sudo ufw enable
-```
+Standard server configuration includes security hardening and necessary software installation.
 
 ## Deployment Architecture
 
-Our backend services are deployed as Docker containers:
-
-```
-api.matra.io --> Load Balancer --> API Containers (3 instances)
-                                   |
-                                   v
-                                MongoDB Atlas (Cloud Database)
-                                   |
-                                   v
-                                Redis Cache
-```
+Our backend services are deployed in containers with proper security and scaling measures.
 
 ## Deployment Process
 
-Our deployment workflow uses GitHub Actions:
-
-```yaml
-name: Deploy to Production
-
-on:
-  workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'backend/**'
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-        
-      - name: Login to Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: registry.digitalocean.com
-          username: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: ./backend
-          push: true
-          tags: registry.digitalocean.com/matra/api:latest
-          
-      - name: Deploy to DigitalOcean
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DO_HOST }}
-          username: ${{ secrets.DO_USERNAME }}
-          key: ${{ secrets.DO_KEY }}
-          script: |
-            cd /opt/matra
-            docker-compose pull
-            docker-compose up -d
-```
+Our deployment workflow uses automated CI/CD pipelines.
 
 ## Database Management
 
-MongoDB Atlas is used for database hosting with the following configuration:
-- Production: M20 dedicated cluster with 3 nodes
-- Staging: M10 dedicated cluster
-- Development: M0 shared cluster
+Database is hosted on a managed database service with appropriate scaling tiers for each environment.
 
 ## SSL Configuration
 
-SSL certificates are managed through Let's Encrypt:
-
-```bash
-# Install Certbot
-sudo apt-get install certbot python3-certbot-nginx -y
-
-# Obtain SSL certificate
-sudo certbot --nginx -d api.matra.io
-```
+Production environments use SSL certificates with auto-renewal.
 
 ## Backup Strategy
-- Database: Automated daily snapshots retained for 30 days
-- Server: Weekly VM snapshots retained for 14 days
-- Code: GitHub repository with protected branches
+- Database: Regular automated backups
+- Server: Regular system snapshots
+- Code: Version control with protected branches
 
 ## Monitoring Setup
-- Server metrics: DigitalOcean Monitoring
-- Application performance: New Relic
-- Error tracking: Sentry
-- Logs: Papertrail 
+- Server metrics tracking
+- Application performance monitoring
+- Error tracking
+- Centralized logging 

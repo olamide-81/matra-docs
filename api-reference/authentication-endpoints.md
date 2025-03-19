@@ -2,7 +2,7 @@
 
 ## Verify Email
 ```
-POST /api/v1/auth/verify-email
+POST /auth/verify-email
 ```
 
 Sends a verification code to the user's email address.
@@ -10,7 +10,7 @@ Sends a verification code to the user's email address.
 ### Request
 ```json
 {
-  "email": "user@example.com"
+  "email": "[user email]"
 }
 ```
 
@@ -25,7 +25,7 @@ Sends a verification code to the user's email address.
 
 ## Register User
 ```
-POST /api/v1/auth/register
+POST /auth/register
 ```
 
 Register a new user with verified email.
@@ -33,10 +33,10 @@ Register a new user with verified email.
 ### Request
 ```json
 {
-  "email": "user@example.com",
-  "firstName": "John",
-  "lastName": "Doe",
-  "verificationCode": "123456"
+  "email": "[user email]",
+  "firstName": "[first name]",
+  "lastName": "[last name]",
+  "verificationCode": "[code]"
 }
 ```
 
@@ -45,14 +45,14 @@ Register a new user with verified email.
 {
   "success": true,
   "message": "User registered successfully",
-  "userId": "user_123456",
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  "userId": "[user ID]",
+  "token": "[authentication token]"
 }
 ```
 
 ## Login with Email Verification
 ```
-POST /api/v1/auth/login
+POST /auth/login
 ```
 
 Authenticate a user using email verification.
@@ -60,7 +60,7 @@ Authenticate a user using email verification.
 ### Request (Step 1)
 ```json
 {
-  "email": "user@example.com"
+  "email": "[user email]"
 }
 ```
 
@@ -76,8 +76,8 @@ Authenticate a user using email verification.
 ### Request (Step 2)
 ```json
 {
-  "email": "user@example.com",
-  "verificationCode": "123456"
+  "email": "[user email]",
+  "verificationCode": "[code]"
 }
 ```
 
@@ -85,15 +85,15 @@ Authenticate a user using email verification.
 ```json
 {
   "success": true,
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token": "[authentication token]",
+  "refreshToken": "[refresh token]",
   "expiresIn": 86400
 }
 ```
 
 ## Request 2FA Code for P2P Transaction
 ```
-POST /api/v1/auth/request-2fa
+POST /auth/request-2fa
 ```
 
 Request a 2FA code via email for verifying a P2P transaction.
@@ -101,7 +101,7 @@ Request a 2FA code via email for verifying a P2P transaction.
 ### Request
 ```json
 {
-  "transactionId": "tx_123456"
+  "transactionId": "[transaction ID]"
 }
 ```
 
@@ -116,7 +116,7 @@ Request a 2FA code via email for verifying a P2P transaction.
 
 ## Verify 2FA Code
 ```
-POST /api/v1/auth/verify-2fa
+POST /auth/verify-2fa
 ```
 
 Verify a 2FA code for a P2P transaction.
@@ -124,8 +124,8 @@ Verify a 2FA code for a P2P transaction.
 ### Request
 ```json
 {
-  "transactionId": "tx_123456",
-  "verificationCode": "123456"
+  "transactionId": "[transaction ID]",
+  "verificationCode": "[code]"
 }
 ```
 
@@ -135,7 +135,7 @@ Verify a 2FA code for a P2P transaction.
   "success": true,
   "message": "2FA verification successful",
   "transaction": {
-    "id": "tx_123456",
+    "id": "[transaction ID]",
     "status": "VERIFIED"
   }
 }
@@ -143,7 +143,7 @@ Verify a 2FA code for a P2P transaction.
 
 ## Resend Verification Code
 ```
-POST /api/v1/auth/resend-verification
+POST /auth/resend-verification
 ```
 
 Resend a verification code to the user's email.
@@ -151,8 +151,8 @@ Resend a verification code to the user's email.
 ### Request
 ```json
 {
-  "email": "user@example.com",
-  "purpose": "LOGIN" // Or "REGISTRATION" or "P2P_TRANSACTION"
+  "email": "[user email]",
+  "purpose": "[verification purpose]"
 }
 ```
 
@@ -167,7 +167,7 @@ Resend a verification code to the user's email.
 
 ## Verify Email Change
 ```
-POST /api/v1/auth/verify-email-change
+POST /auth/verify-email-change
 ```
 
 Verify a change of email address.
@@ -175,8 +175,8 @@ Verify a change of email address.
 ### Request (Step 1 - Request verification for new email)
 ```json
 {
-  "currentEmail": "user@example.com",
-  "newEmail": "newemail@example.com"
+  "currentEmail": "[current email]",
+  "newEmail": "[new email]"
 }
 ```
 
@@ -192,9 +192,9 @@ Verify a change of email address.
 ### Request (Step 2 - Submit verification code)
 ```json
 {
-  "currentEmail": "user@example.com",
-  "newEmail": "newemail@example.com",
-  "verificationCode": "123456"
+  "currentEmail": "[current email]",
+  "newEmail": "[new email]",
+  "verificationCode": "[code]"
 }
 ```
 

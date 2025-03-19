@@ -4,8 +4,8 @@ This internal documentation describes the user onboarding process for the Matra 
 
 ## App Distribution
 
-- **iOS TestFlight**: https://testflight.apple.com/join/matra
-- **Android Play Store**: https://play.google.com/store/apps/details?id=io.matra.wallet
+- **iOS**: Available through beta distribution channel
+- **Android**: Available through app store
 
 ## Installation Process
 
@@ -13,18 +13,18 @@ This internal documentation describes the user onboarding process for the Matra 
   <div class="card">
     <h3 class="card-title">iOS Installation</h3>
     <ol>
-      <li>User opens TestFlight on their iOS device</li>
-      <li>User enters our invitation code or taps the invitation link</li>
-      <li>User taps "Accept" to join the beta</li>
-      <li>User taps "Install" to download the app</li>
+      <li>User opens beta testing app on their iOS device</li>
+      <li>User enters invitation code or taps the invitation link</li>
+      <li>User accepts to join the beta</li>
+      <li>User installs the app</li>
     </ol>
   </div>
   <div class="card">
     <h3 class="card-title">Android Installation</h3>
     <ol>
-      <li>User opens the Google Play Store</li>
-      <li>User searches for "Matra Wallet"</li>
-      <li>User taps "Install" to download the app</li>
+      <li>User opens the app store</li>
+      <li>User searches for our app</li>
+      <li>User installs the app</li>
       <li>Installation completes automatically</li>
     </ol>
   </div>
@@ -35,7 +35,7 @@ This internal documentation describes the user onboarding process for the Matra 
 <div class="steps">
   <div class="step">
     <h3>App Launch</h3>
-    <p>User launches the Matra app for the first time.</p>
+    <p>User launches the app for the first time.</p>
   </div>
   <div class="step">
     <h3>Email Collection</h3>
@@ -46,7 +46,7 @@ This internal documentation describes the user onboarding process for the Matra 
   </div>
   <div class="step">
     <h3>Email Verification</h3>
-    <p>A verification code is sent to the user's email. The code expires after 6 minutes.</p>
+    <p>A verification code is sent to the user's email with an expiration time.</p>
     <p>User enters this verification code to validate their email ownership.</p>
   </div>
   <div class="step">
@@ -56,23 +56,23 @@ This internal documentation describes the user onboarding process for the Matra 
   <div class="step">
     <h3>Wallet Creation</h3>
     <p>User follows the prompts to create their self-custodial wallet.</p>
-    <p>For detailed wallet creation implementation, see <a href="creating-wallet.md">Creating a Wallet</a>.</p>
+    <p>For detailed wallet creation implementation, see the wallet creation documentation.</p>
   </div>
 </div>
 
 ## Recovery Phrase Security
 
 <div class="callout danger">
-  <p><strong>CRITICAL:</strong> Users must understand that their recovery phrase is the only way to recover their wallet if they lose access to their device. Matra cannot recover wallets for users who lose their recovery phrase.</p>
+  <p><strong>CRITICAL:</strong> Users must understand that their recovery phrase is the only way to recover their wallet if they lose access to their device. We cannot recover wallets for users who lose their recovery phrase.</p>
 </div>
 
-During wallet creation, users are shown a 12-word recovery phrase. The app instructs them to:
+During wallet creation, users are shown a recovery phrase. The app instructs them to:
 
 1. Write down the recovery phrase on paper in the correct order
 2. Store this paper in a secure, waterproof, and fireproof location
 3. Consider creating multiple backup copies stored in different secure locations
 4. Never store the recovery phrase digitally (no photos, no digital documents, no cloud storage)
-5. Never share the recovery phrase with anyone, including Matra support
+5. Never share the recovery phrase with anyone, including support staff
 
 ## App Navigation Structure
 
@@ -100,7 +100,7 @@ After creating a wallet, users have access to these main interface areas:
     </tr>
     <tr>
       <td>Swap</td>
-      <td>Token exchange through ChangeNOW integration</td>
+      <td>Token exchange feature</td>
     </tr>
     <tr>
       <td>Profile</td>
@@ -111,16 +111,16 @@ After creating a wallet, users have access to these main interface areas:
 
 ## Web Dashboard Authentication
 
-Users can access our web interface through:
+Users can access the web interface through:
 
 <div class="steps">
   <div class="step">
     <h3>Web Access</h3>
-    <p>User visits web.matra.io in their browser.</p>
+    <p>User visits the web dashboard in their browser.</p>
   </div>
   <div class="step">
     <h3>QR Code Authentication</h3>
-    <p>User opens their Matra mobile app and scans the QR code displayed on the web dashboard.</p>
+    <p>User opens their mobile app and scans the QR code displayed on the web dashboard.</p>
   </div>
   <div class="step">
     <h3>Authentication Confirmation</h3>

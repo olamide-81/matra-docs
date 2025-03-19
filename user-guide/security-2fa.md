@@ -1,72 +1,61 @@
-# Security & 2FA
-Matra prioritizes the security of your assets with multiple layers of protection.
+# Security & Two-Factor Authentication
+
+This internal documentation describes the security features and two-factor authentication implementation in our application.
 
 ## Two-Factor Authentication (2FA)
-Matra uses email-based two-factor authentication specifically for P2P transactions:
 
-<div class="callout note">
-  <p>Matra only collects your email for sending notifications and for 2FA verification during P2P transactions.</p>
-</div>
+Our application uses email-based 2FA specifically for P2P transactions:
+
+- Email verification codes are sent only when users initiate P2P transactions
+- Codes have a limited validity period
+- Each code can only be used once
 
 ### How 2FA Works for P2P Transactions
 
-1. When you initiate a P2P transaction, a verification code is sent to your email.
-2. Enter the verification code to authorize the transaction.
-3. The transaction will not proceed until verified with the code.
-
-*Note: Google Authenticator integration is coming soon as an optional additional security feature.*
-
-## Securing Your Wallet
-
-- **Recovery Phrase**: Always keep your 12-word recovery phrase secure and offline.
-- **App PIN/Biometrics**: Set up a PIN code or use biometric authentication (fingerprint/Face ID) for app access.
-- **Automatic Logout**: The app automatically logs out after a period of inactivity.
+1. User initiates a P2P transaction
+2. System sends a verification code to the user's registered email
+3. User enters the verification code in the app
+4. System validates the code
+5. If valid, the P2P transaction is processed
 
 ## Self-Custodial Security Model
 
-Matra uses a self-custodial security model, which means:
+Our application follows a self-custodial security model:
 
-1. Your private keys are stored only on your device.
-2. Matra cannot access your funds or private keys.
-3. You have complete control over your assets.
-4. Recovery is only possible with your recovery phrase.
+- Users have complete control over their private keys
+- Private keys never leave the user's device
+- All transactions require user authorization
+- Users are responsible for securely storing their recovery phrase
 
 <div class="callout warning">
-  <p>If you lose your recovery phrase, Matra cannot help you recover your wallet. There are no "forgot my recovery phrase" options in self-custodial wallets.</p>
+  <p><strong>Warning:</strong> If a user loses their recovery phrase, there is no way to recover their wallet or funds. There is no password reset option or backup access.</p>
 </div>
 
-## Secure Authentication Flow
-
-When you first set up your Matra account:
-
-1. You provide your email (used only for notifications and P2P transaction verification).
-2. A verification code is sent to your email to confirm ownership.
-3. After verification, your wallet is created.
-4. You should immediately secure your recovery phrase.
-
 ## Security Best Practices
-- Never share your recovery phrase or private keys with anyone.
-- Be cautious of phishing attempts - always verify you're using the official Matra app.
-- Enable all available security features on your device.
-- Regularly update the app to ensure you have the latest security patches.
-- Use the app's built-in browser for any crypto-related websites to avoid phishing.
+
+We recommend the following security practices to users:
+
+- Store recovery phrase securely offline
+- Enable device-level security (biometrics, PIN)
+- Never share recovery phrase with anyone
+- Be cautious of phishing attempts
+- Verify transaction details before confirming
+- Keep the app updated to the latest version
 
 ## Device Security
-Securing your mobile device is critical for wallet security:
 
-- Enable screen lock on your device (PIN, pattern, biometrics).
-- Keep your device's operating system and apps updated.
-- Be cautious about which apps you install.
-- Consider using a dedicated device for substantial crypto holdings.
+The application security is enhanced with device-level security features:
+
+- Biometric authentication (where available)
+- Local data encryption
+- Automatic session timeout
+- No sensitive data stored in the device clipboard
 
 ## Transaction Security
-Matra implements multiple security measures for transactions:
 
-- Double confirmation for all outgoing transactions.
-- Email 2FA for P2P transactions.
-- Clear transaction details before confirmation.
-- Transaction limits to reduce risk.
+Additional security measures for transactions include:
 
-<div class="callout tip">
-  <p>Always double-check the recipient address before confirming any transaction. Even a single incorrect character can result in permanent loss of funds.</p>
-</div> 
+- Double confirmation for transactions
+- Email 2FA for P2P transactions
+- Transaction amount limits
+- Clearly displayed transaction fees and details 
