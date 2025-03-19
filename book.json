@@ -1,0 +1,45 @@
+{
+  "title": "Matra Documentation",
+  "description": "Comprehensive documentation for the Matra decentralized P2P and self-custodial wallet platform",
+  "author": "Matra Team",
+  "language": "en",
+  "styles": {
+    "website": ".gitbook/styles/custom.css"
+  },
+  "plugins": [
+    "expandable-chapters",
+    "copy-code-button",
+    "hints",
+    "theme-default",
+    "search",
+    "fontsettings",
+    "back-to-top-button",
+    "highlight",
+    "lunr",
+    "sharing"
+  ],
+  "pluginsConfig": {
+    "theme-default": {
+      "showLevel": false
+    },
+    "fontsettings": {
+      "theme": "white",
+      "family": "sans",
+      "size": 2
+    },
+    "expandable-chapters": {
+      "collapse": true
+    },
+    "sharing": {
+      "facebook": true,
+      "twitter": true,
+      "linkedin": true,
+      "weibo": false,
+      "all": ["facebook", "twitter", "linkedin", "weibo"]
+    }
+  },
+  "structure": {
+    "readme": "README.md",
+    "summary": "SUMMARY.md"
+  }
+} 

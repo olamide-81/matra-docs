@@ -1,0 +1,22 @@
+root: ./
+
+structure:
+  readme: README.md
+  summary: SUMMARY.md
+
+redirects:
+  /overview: /introduction/overview.md
+  /features: /introduction/features.md
+  /architecture: /introduction/system-architecture.md
+  /technology: /introduction/technology-stack.md
+  /start: /user-guide/getting-started.md
+  /api: /api-reference/authentication-endpoints.md
+  /dev: /developer-guide/api-overview.md
+  /faq: /faq-troubleshooting.md
+
+plugins:
+  - tabs
+  - mermaid-gb
+  - swagger
+  - ga
+  - anchor-navigation 
